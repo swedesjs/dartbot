@@ -30,24 +30,12 @@ const onlineEnum = [
   "FullVersion"
 ];
 
+const bogId = 651129803;
 final count = (1000 / 200).ceil();
+
 Future<void> main() async {
   load();
   final vk = VkLib(token: env["TOKEN"]!);
-
-  try {
-    await app(vk);
-  } catch (error) {
-    await vk.api.messages.send(
-        chat_id: 26,
-        message:
-            "#ErrorSwedeTS\nУ бога возникла ошибка: $error\nСообщите ему нахуй! И да, тут мамашу смирнова угнитаю");
-  }
-}
-
-const bogId = 651129803;
-
-Future<void> app(VkLib vk) async {
   final processUptime = dateNow();
 
   final longpoll = UserLongPoll(vk.api);
