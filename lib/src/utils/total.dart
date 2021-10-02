@@ -1,1 +1,1 @@
-num total(List<num> listTotal) => listTotal.reduce((value, element) => value+element);
+num total(List<num> listTotal) => listTotal.reduce((value, element) => value + element);
