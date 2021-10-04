@@ -11,6 +11,7 @@ import "package:vklib/src/core/utils/resolveResource.dart";
 import "package:vklib/vklib.dart";
 
 import "src/context/message_context.dart";
+import "src/utils/ip.dart";
 import "src/utils/utils.dart";
 
 // ignore: non_constant_identifier_names
@@ -190,7 +191,7 @@ Future<void> main() async {
     final text = context.replyMessage?.text;
 
     if (text == null) {
-      await context.send("ответь на сообщение с текстом!");
+      await context.editDelete("Ответь на сообщение с текстом!");
       return;
     }
 
@@ -290,7 +291,7 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
     }
   });
 
-  hearManager.hear(BasePattern(r"^(?:1000-7)"), (context) async {
+  hearManager.hear(BasePattern(r"^(?:1000-7)$"), (context) async {
     var text = "";
 
     for (var i = 1000; i > 0; i -= 7) {
@@ -300,5 +301,36 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
     await context.editDelete(text);
   });
 
+  hearManager.hear(BasePattern(r"^(?:ip)\s(.*)$"), (context) async {
+    try {
+      final response = await IpService(Uri.parse(context.match[0].group(1)!)).load();
+
+      if (response.status == IpResponseStatus.FAIL) {
+        await context.editDelete("Произошла ошибка! Сообщение: ${response.message}");
+        return;
+      }
+
+      await context.editDelete("""
+Информация об IP-адресе: 
+
+🃏 IP: ${response.query}
+⛵ Континент: ${response.continent}
+🌍 Страна: ${response.country}
+🗽 Регион: ${response.regionName}
+🌆 Город: ${response.city}
+🛰 Провайдер: ${response.isp}
+🖥 Организация: ${response.district == "" ? "Неизвестно" : response.district}
+🔎 AS: ${response.as}
+📋 AS-NAME: ${response.asname}
+🧲 DNS сервер: ${response.reverse}
+📲 Мобильная сеть: ${response.mobile ? "Используется" : "Не используется"}
+🔒 Прокси/VPN: ${response.proxy ? "Используется" : "Не используется"}
+🚀 Хостинг: ${response.hosting ? "Используется" : "Не используется"}
+
+      """, edit: EditOptions(lat: response.lat, long: response.lon, dont_parse_links: true, keep_snippets: false));
+    } catch (error) {
+      await context.editDelete(error.toString());
+    }
+  });
   longpoll.start();
 }
