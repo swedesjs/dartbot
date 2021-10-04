@@ -1,6 +1,6 @@
 import "package:dio/dio.dart";
 
-enum IpResponseStatus { SUCCESS, FAIL, UNKROWN }
+enum IpResponseStatus { SUCCESS, FAIL, UNKNOWN }
 
 class _IpResponse {
   Map<String, dynamic> options;
@@ -13,7 +13,7 @@ class _IpResponse {
         ? IpResponseStatus.SUCCESS
         : statusResponse == "fail"
             ? IpResponseStatus.FAIL
-            : IpResponseStatus.UNKROWN;
+            : IpResponseStatus.UNKNOWN;
   }
 
   String get continent => options["continent"];
