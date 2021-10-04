@@ -360,7 +360,13 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
               .editDelete("Тип ссылки не подходит! Выявленный тип: ${recourse["type"] ?? "null"}");
       }
     } catch (error) {
-      await context.editDelete(error.toString());
+      await context.editDelete(error is APIException
+          ? (error.code == 15
+              ? "Невозможно добавить, возможно потому, что он находится в беседе или закрыл доступ к приглашениям"
+              : error.code == 925
+                  ? "В беседу могут приглашать только админы!"
+                  : error.toString())
+          : error.toString());
     }
   });
   longpoll.start();
