@@ -5,6 +5,12 @@ import "package:vklib/vklib.dart";
 
 import "../utils/utils.dart";
 
+class EditOptions {
+  num? lat, long;
+  bool? keep_snippets, dont_parse_links;
+  EditOptions({this.lat, this.long, this.keep_snippets, this.dont_parse_links});
+}
+
 class Reply {
   Json options;
   Reply(this.options);
@@ -129,20 +135,26 @@ class MessageContext {
           template: template,
           keyboard: keyboard?.toString()))["response"];
 
-  Future<bool> editDelete(String message, {Duration duration = const Duration(minutes: 1)}) async {
+  Future<bool> editDelete(String message,
+      {Duration duration = const Duration(minutes: 1), EditOptions? edit}) async {
     try {
       try {
-        await editMessage(message);
+        await editMessage(message,
+            lat: edit?.lat,
+            long: edit?.long,
+            keep_snippets: edit?.keep_snippets,
+            dont_parse_links: edit?.dont_parse_links);
       } catch (error) {
         await editMessage(error.toString());
       }
 
       await Future.delayed(duration);
-      
+
       return await deleteMessage(message_ids: [id], delete_for_all: true);
     } catch (error) {
       try {
         await send(error.toString());
+        // ignore: empty_catches
       } catch (err) {}
     }
 
