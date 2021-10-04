@@ -302,6 +302,7 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
   });
 
   hearManager.hear(BasePattern(r"^(?:ip)\s(.*)$"), (context) async {
+    print(Uri.parse(context.match[0].group(1)!).origin);
     try {
       final response = await IpService(Uri.parse(context.match[0].group(1)!)).load();
 
@@ -326,8 +327,38 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
 📲 Мобильная сеть: ${response.mobile ? "Используется" : "Не используется"}
 🔒 Прокси/VPN: ${response.proxy ? "Используется" : "Не используется"}
 🚀 Хостинг: ${response.hosting ? "Используется" : "Не используется"}
+    """,
+          edit: EditOptions(
+              lat: response.lat,
+              long: response.lon,
+              dont_parse_links: false,
+              keep_snippets: false));
+    } catch (error) {
+      await context.editDelete(error.toString());
+    }
+  });
 
-      """, edit: EditOptions(lat: response.lat, long: response.lon, dont_parse_links: true, keep_snippets: false));
+  hearManager.hear(BasePattern(r"^(?:addchat|добавить)\s(.*)$"), (context) async {
+    if (!context.isChat) {
+      await context.editDelete("Введи команду в беседе!");
+      return;
+    }
+
+    try {
+      final recourse = await resolveResource(context.match[0].group(1), vk.api);
+      switch (recourse["type"]) {
+        case "group":
+          await VkLib(token: env["BOTPOD"]!)
+              .api
+              .request("bot.addBotToChat", {"peer_id": context.peerId, "bot_id": -recourse["id"]});
+          break;
+        case "user":
+          await vk.api.messages.addChatUser(chat_id: context.chatId, user_id: recourse["id"]);
+          break;
+        default:
+          await context
+              .editDelete("Тип ссылки не подходит! Выявленный тип: ${recourse["type"] ?? "null"}");
+      }
     } catch (error) {
       await context.editDelete(error.toString());
     }
