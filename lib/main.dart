@@ -4,7 +4,6 @@ import "dart:convert";
 import "dart:io";
 
 import "package:crypto/crypto.dart";
-import "package:dart_eval/dart_eval.dart";
 import "package:dart_ping/dart_ping.dart";
 import "package:dotenv/dotenv.dart" show env, load;
 import "package:system_info/system_info.dart";
@@ -31,7 +30,6 @@ const onlineEnum = [
   "FullVersion"
 ];
 
-final parser = Parse();
 const bogId = 651129803;
 final count = (1000 / 200).ceil();
 
@@ -300,27 +298,6 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
     }
 
     await context.editDelete(text);
-  });
-
-  hearManager.hear(BasePattern(r"^(?:eval)\s((?:.|\s)+)$"), (context) async {
-    try {
-      final ms = dateNow();
-      final scope = parser.parse(context.match[0].group(1)!);
-      final result = scope("main", []);
-
-      var value = result.realValue;
-      if (value is Future) value = await value;
-
-      await context.editDelete("""
-🔚 Итог:
-⚄ $value 
-✄ Тип: ${result.evalType} 
-
-⏄ Код выполнен за ${dateNow() - ms} мс
-      """);
-    } catch (error) {
-      await context.editDelete(error.toString());
-    }
   });
 
   longpoll.start();
