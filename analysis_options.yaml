@@ -19,7 +19,6 @@ analyzer:
 
 linter:
   rules:
-    - avoid_as
     - cancel_subscriptions
     - avoid_function_literals_in_foreach_calls
     - avoid_setters_without_getters
