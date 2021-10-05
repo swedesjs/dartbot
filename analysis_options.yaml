@@ -20,7 +20,6 @@ analyzer:
 linter:
   rules:
     - cancel_subscriptions
-    - avoid_as
     - avoid_function_literals_in_foreach_calls
     - avoid_setters_without_getters
     - no_runtimeType_toString
