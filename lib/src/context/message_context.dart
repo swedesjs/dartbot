@@ -8,7 +8,8 @@ import "../utils/utils.dart";
 class EditOptions {
   num? lat, long;
   bool? keep_snippets, dont_parse_links;
-  EditOptions({this.lat, this.long, this.keep_snippets, this.dont_parse_links});
+  String? attachment;
+  EditOptions({this.lat, this.long, this.keep_snippets, this.dont_parse_links, this.attachment});
 }
 
 class Reply {
@@ -143,7 +144,8 @@ class MessageContext {
             lat: edit?.lat,
             long: edit?.long,
             keep_snippets: edit?.keep_snippets,
-            dont_parse_links: edit?.dont_parse_links);
+            dont_parse_links: edit?.dont_parse_links,
+            attachment: edit?.attachment);
       } catch (error) {
         await editMessage(error.toString());
       }
