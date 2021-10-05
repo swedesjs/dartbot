@@ -7,16 +7,18 @@ class Upload {
   API _api;
   Upload(this._api);
 
-  Future<String> privateMessage(String url, {int? peerId}) async {
-    final futureWait = await Future.wait([
-      Dio().get(url, options: Options(responseType: ResponseType.bytes)),
-      _api.photos.getMessagesUploadServer(peer_id: peerId)
-    ]);
+  Future<String> privateMessageAsBytes(List<int> byte, {int? peerId}) => privateMessageConduct(byte, peerId: peerId);
 
-    final getBytes = futureWait[0] as Response<dynamic>,
-        getServer = (futureWait[1] as Json)["response"],
-        formData = FormData.fromMap(
-            {"photo": MultipartFile.fromBytes(getBytes.data, filename: url.split("/").last)});
+  Future<String> privateMessageAsUrl(String url, {int? peerId}) async {
+    final response = await Dio().get(url, options: Options(responseType: ResponseType.bytes));
+
+    return await privateMessageConduct(response.data, peerId: peerId);
+  }
+
+  Future<String> privateMessageConduct(List<int> source, {int? peerId}) async {
+    final getServer = (await _api.photos.getMessagesUploadServer(peer_id: peerId))["response"],
+        formData =
+            FormData.fromMap({"photo": MultipartFile.fromBytes(source, filename: "test.png")});
 
     final response = jsonDecode((await Dio().post(getServer["upload_url"],
             data: formData, options: Options(contentType: "multipart/form-data")))
