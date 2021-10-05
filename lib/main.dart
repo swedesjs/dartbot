@@ -346,6 +346,7 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
 
     try {
       final recourse = await resolveResource(context.match[0].group(1), vk.api);
+
       switch (recourse["type"]) {
         case "group":
           await VkLib(token: env["BOTPOD"]!)
@@ -363,9 +364,7 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
       await context.editDelete(error is APIException
           ? (error.code == 15
               ? "Невозможно добавить, возможно потому, что он находится в беседе или закрыл доступ к приглашениям"
-              : error.code == 925
-                  ? "В беседу могут приглашать только админы!"
-                  : error.toString())
+              : (error.code == 925 ? "В беседу могут приглашать только админы!" : error.toString()))
           : error.toString());
     }
   });
