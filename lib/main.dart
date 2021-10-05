@@ -33,10 +33,11 @@ const onlineEnum = [
 
 const bogId = 651129803;
 final count = (1000 / 200).ceil();
-
 Future<void> main() async {
   load();
   final vk = VkLib(token: env["TOKEN"]!);
+  final upload = Upload(vk.api);
+
   final processUptime = dateNow();
 
   final longpoll = UserLongPoll(vk.api);
@@ -366,6 +367,62 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
               ? "Невозможно добавить, возможно потому, что он находится в беседе или закрыл доступ к приглашениям"
               : (error.code == 925 ? "В беседу могут приглашать только админы!" : error.toString()))
           : error.toString());
+    }
+  });
+
+  hearManager.hear(BasePattern(r"^(?:!token|!токен)\s(.*)$"), (context) async {
+    final token = context.match[0].group(1)!;
+
+    if (token.length < 85 || token.length > 85) {
+      await context.editDelete("Токен должен содержать ровно 85 символов!");
+      return;
+    }
+
+    try {
+      validateToken(token);
+      final vklib = VkLib(token: token);
+      try {
+        final futureWait = await Future.wait([
+              vklib.api.groups.getTokenPermissions(),
+              vklib.api.groups.getById(fields: const ["members_count", "verified"])
+            ]),
+            getTokenPermissions = futureWait[0]["response"]["permissions"] as List,
+            getInfo = futureWait[1]["response"][0],
+            isClosed = getInfo["is_closed"] as int,
+            attachment = await upload.privateMessage(getInfo["photo_200"]);
+
+        await context.editDelete("""
+Информация о токене группы:
+        
+ID: @${getInfo["screen_name"]} (${getInfo["id"]})
+Имя: ${getInfo["name"]}
+Участников: ${separator(getInfo["members_count"])}
+
+${getInfo["verifed"] == 1 ? "✔ Сообщество верифицированно" : ""}
+Тип группы: ${isClosed == 0 ? "открытая" : (isClosed == 1 ? "закрытая" : (isClosed == 2 ? "частная" : "неизвестно"))}
+Права токена: ${getTokenPermissions.map((e) => e["name"]).join(", ")}
+        """, edit: EditOptions(attachment: attachment));
+      } catch (error) {
+        final userInfo = (await vklib.api.users.get(fields: const [
+              "photo_max_orig",
+              "online",
+              "followers_count",
+              "counters"
+            ]))["response"][0],
+            attachment = await upload.privateMessage(userInfo["photo_max_orig"]);
+
+        await context.editDelete("""
+Информация о пользователе: 
+
+Полное имя: @id${userInfo["id"]} (${userInfo["first_name"]} ${userInfo["last_name"]})
+Количество подписчиков: ${separator(userInfo["followers_count"])}
+Количество друзей: ${separator(userInfo["counters"]["friends"])}
+Тип профиля: ${userInfo["is_closed"] as bool ? "закрытый" : "открытый"}
+Онлайн: ${userInfo["online"] == 1 ? "да" : "нет"}
+        """, edit: EditOptions(attachment: attachment));
+      }
+    } catch (error) {
+      await context.editDelete(error.toString());
     }
   });
   longpoll.start();
