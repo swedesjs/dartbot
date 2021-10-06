@@ -5,7 +5,9 @@ import "dart:io";
 
 import "package:crypto/crypto.dart";
 import "package:dart_ping/dart_ping.dart";
+import "package:dio/dio.dart";
 import "package:dotenv/dotenv.dart" show env, load;
+import "package:image/image.dart";
 import "package:system_info/system_info.dart";
 import "package:vklib/src/core/utils/resolveResource.dart";
 import "package:vklib/vklib.dart";
@@ -30,6 +32,12 @@ const onlineEnum = [
   "DesktopWindows10",
   "FullVersion"
 ];
+
+final demotivator = File("asserts/demotivator.jpg").readAsBytesSync();
+final demotivatorFont =
+    File("asserts/demotivator.fnt").readAsStringSync(encoding: Encoding.getByName("utf-8")!);
+final demotivatorPng = File("asserts/demotivator.words.png").readAsBytesSync();
+final fontDemotivator = readFont(demotivatorFont, decodePng(demotivatorPng)!);
 
 const bogId = 651129803;
 final count = (1000 / 200).ceil();
@@ -389,7 +397,7 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
             getTokenPermissions = futureWait[0]["response"]["permissions"] as List,
             getInfo = futureWait[1]["response"][0],
             isClosed = getInfo["is_closed"] as int,
-            attachment = await upload.privateMessage(getInfo["photo_200"]);
+            attachment = await upload.privateMessageAsUrl(getInfo["photo_200"]);
 
         await context.editDelete("""
 Информация о токене группы:
@@ -409,7 +417,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
               "followers_count",
               "counters"
             ]))["response"][0],
-            attachment = await upload.privateMessage(userInfo["photo_max_orig"]);
+            attachment = await upload.privateMessageAsUrl(userInfo["photo_max_orig"]);
 
         await context.editDelete("""
 Информация о пользователе: 
@@ -423,6 +431,29 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
       }
     } catch (error) {
       await context.editDelete(error.toString());
+    }
+  });
+
+  hearManager.hear(BasePattern(r"^(?:дем)\s(.*)$"), (context) async {
+    try {
+      final imageVk = context.photo[0].sizes.lastWhere((element) => element.type == "r");
+
+      final photoByte =
+          await Dio().get(imageVk.url, options: Options(responseType: ResponseType.bytes));
+
+      final image = decodeImage(demotivator)!;
+      final image2 = copyResize(decodeImage(photoByte.data)!, width: 560, height: 410);
+
+      drawImage(image, image2, dstX: 70, dstY: 46);
+
+      drawStringCentered(image, fontDemotivator, context.match[0].group(1)!, y: 500);
+
+      final attachment = await upload.privateMessageAsBytes(encodePng(image));
+
+      await context.send("", attachment: attachment);
+    } catch (error) {
+      await context.editDelete(
+          error is RangeError ? "Прикрепите изображение к сообщению!" : error.toString());
     }
   });
   longpoll.start();
