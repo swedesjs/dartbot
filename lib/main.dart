@@ -434,7 +434,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
     }
   });
 
-  hearManager.hear(BasePattern(r"^(?:дем)\s(.*)$"), (context) async {
+  hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem)\s(.*)$"), (context) async {
     try {
       final imageVk = context.photo[0].sizes.lastWhere((element) => element.type == "r");
 
