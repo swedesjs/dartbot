@@ -434,7 +434,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
     }
   });
 
-  hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem|testing)\s(.*)$"), (context) async {
+  hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem)\s(.*)$"), (context) async {
     try {
       String? url;
       try {
