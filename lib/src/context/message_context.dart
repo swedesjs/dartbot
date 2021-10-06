@@ -21,6 +21,11 @@ class Reply {
   int get senderId => options["from_id"];
   int get createdAt => options["date"];
   String? get text => options["text"];
+  
+  List<PhotoAttachment> get photo => (options["attachments"] as List)
+      .where((element) => element["type"] == "photo")
+      .map((e) => PhotoAttachment(e["photo"]))
+      .toList();
 }
 
 class MessageContext {
