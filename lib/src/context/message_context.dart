@@ -3,6 +3,7 @@
 import "package:vklib/src/core/utils/keyboard.dart";
 import "package:vklib/vklib.dart";
 
+import "../objects/photoAttachment.dart";
 import "../utils/utils.dart";
 
 class EditOptions {
@@ -46,6 +47,10 @@ class MessageContext {
 
   Reply? get replyMessage =>
       options["reply_message"] != null ? Reply(options["reply_message"]) : null;
+  List<PhotoAttachment> get photo => (options["attachments"] as List)
+      .where((element) => element["type"] == "photo")
+      .map((e) => PhotoAttachment(e["photo"]))
+      .toList();
 
   bool get isChat => peerType == MessageSource.CHAT;
   bool get isUser => senderType == MessageSource.USER;
