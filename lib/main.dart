@@ -472,5 +472,24 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
       await context.editDelete(error.toString());
     }
   });
+
+  hearManager.hear(BasePattern(r"^(?:!tester)\s?(.*)?$"), (context) async {
+    try {
+      final userId = await getUserId(context, vk.api);
+      final tester = await getTester(userId);
+
+      await context.editDelete("""
+Пользователь: @id${tester.reporter.id}
+
+Статус: ${tester.reporter.statusText}
+Позиция в топе: ${tester.reporter.topPosition}
+Количество отчетов: ${tester.reporter.reportsCount}
+
+https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
+""");
+    } catch (error) {
+      await context.editDelete(error.toString());
+    }
+  });
   longpoll.start();
 }
