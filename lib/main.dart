@@ -257,8 +257,13 @@ Future<void> main() async {
     try {
       final userId = await getUserId(context, vk.api);
 
-      final dataReg = await getVkRegDate(userId);
-      final user = (await vk.api.users.get(user_ids: [userId], name_case: "gen"))["response"][0];
+      final futureWait = await Future.wait([
+        getVkRegDate(userId),
+        vk.api.users.get(user_ids: [userId], name_case: "gen")
+      ]);
+
+      final dataReg = futureWait[0] as int, user = (futureWait[1] as Json)["response"][0];
+
       await context.editDelete(
           "Дата регистрации @id${user["id"]} (${user["first_name"]} ${user["last_name"]}): ${unixTime(dataReg)}\nТоесть в вк он: ${unixStampTime(dateNow() - dataReg)}");
     } catch (error) {
