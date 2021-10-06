@@ -436,10 +436,8 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
 
   hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem)\s(.*)$"), (context) async {
     try {
-      final imageVk = context.photo[0].sizes.lastWhere((element) => element.type == "r");
-
       final photoByte =
-          await Dio().get(imageVk.url, options: Options(responseType: ResponseType.bytes));
+          await Dio().get(context.photo[0].largeSizeUrl, options: Options(responseType: ResponseType.bytes));
 
       final image = decodeImage(demotivator)!;
       final image2 = copyResize(decodeImage(photoByte.data)!, width: 560, height: 410);
