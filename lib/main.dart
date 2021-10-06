@@ -434,10 +434,24 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
     }
   });
 
-  hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem)\s(.*)$"), (context) async {
+  hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem|testing)\s(.*)$"), (context) async {
     try {
-      final photoByte = await Dio()
-          .get(context.photo[0].largeSizeUrl, options: Options(responseType: ResponseType.bytes));
+      String? url;
+      try {
+        url = context.photo[0].largeSizeUrl;
+      } catch (error) {
+      }
+
+      try {
+        url ??= context.replyMessage!.photo[0].largeSizeUrl;
+      } catch (error) {}
+
+      if (url == null) {
+        await context.editDelete("Прикрепите или ответьте на сообщение с изображением!");
+        return;
+      }
+
+      final photoByte = await Dio().get(url, options: Options(responseType: ResponseType.bytes));
 
       final image = decodeImage(demotivator)!;
       final image2 = copyResize(decodeImage(photoByte.data)!,
@@ -452,8 +466,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
       await context.editDelete("",
           edit: EditOptions(attachment: attachment), duration: const Duration(minutes: 2));
     } catch (error) {
-      await context.editDelete(
-          error is RangeError ? "Прикрепите изображение к сообщению!" : error.toString());
+      await context.editDelete(error.toString());
     }
   });
   longpoll.start();
