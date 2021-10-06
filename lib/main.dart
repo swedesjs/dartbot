@@ -436,11 +436,12 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
 
   hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem)\s(.*)$"), (context) async {
     try {
-      final photoByte =
-          await Dio().get(context.photo[0].largeSizeUrl, options: Options(responseType: ResponseType.bytes));
+      final photoByte = await Dio()
+          .get(context.photo[0].largeSizeUrl, options: Options(responseType: ResponseType.bytes));
 
       final image = decodeImage(demotivator)!;
-      final image2 = copyResize(decodeImage(photoByte.data)!, width: 560, height: 410);
+      final image2 = copyResize(decodeImage(photoByte.data)!,
+          width: 560, height: 410, interpolation: Interpolation.cubic);
 
       drawImage(image, image2, dstX: 70, dstY: 46);
 
@@ -448,7 +449,8 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
 
       final attachment = await upload.privateMessageAsBytes(encodePng(image));
 
-      await context.editDelete("", edit: EditOptions(attachment: attachment), duration: const Duration(minutes: 2));
+      await context.editDelete("",
+          edit: EditOptions(attachment: attachment), duration: const Duration(minutes: 2));
     } catch (error) {
       await context.editDelete(
           error is RangeError ? "Прикрепите изображение к сообщению!" : error.toString());
