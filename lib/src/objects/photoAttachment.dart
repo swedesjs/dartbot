@@ -1,5 +1,9 @@
 import "package:vklib/vklib.dart" show Json;
 
+const _smallSizes = ["m", "s"];
+const _mediumSizes = ["y", "r", "q", "p", ..._smallSizes];
+const _largeSizes = ["w", "z", ..._mediumSizes];
+
 class _PhotoAttachmentSizes {
   Json options;
   _PhotoAttachmentSizes(this.options);
@@ -27,4 +31,29 @@ class PhotoAttachment {
 
   List<_PhotoAttachmentSizes> get sizes =>
       (options["sizes"] as List).map((e) => _PhotoAttachmentSizes(e)).toList();
+
+	/// Returns the URL of a small photo
+	/// (130 or 75)
+  String get smallSizeUrl => getSizes(_smallSizes)[0].url;
+
+  
+	 /// Returns the URL of a medium photo
+	 /// (807 or 604 or less)
+  String get mediumSizeUrl => getSizes(_mediumSizes)[0].url;
+
+	 /// Returns the URL of a large photo
+	 /// (2560 or 1280 or less)
+  String get largeSizeUrl => getSizes(_largeSizes)[0].url;
+
+  List<_PhotoAttachmentSizes> getSizes(List<String> sizeTypes) {
+    if (sizes.isEmpty) return [];
+
+    return sizeTypes.map<_PhotoAttachmentSizes?>((sizeType) {
+      try {
+        return sizes.lastWhere((element) => element.type == sizeType);
+      } catch (error) {
+        return null;
+      }
+    }).where((element) => element != null).toList().cast<_PhotoAttachmentSizes>();
+  }
 }
