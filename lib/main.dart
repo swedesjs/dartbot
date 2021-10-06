@@ -450,7 +450,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
 
       final attachment = await upload.privateMessageAsBytes(encodePng(image));
 
-      await context.send("", attachment: attachment);
+      await context.editDelete("", edit: EditOptions(attachment: attachment), duration: const Duration(minutes: 2));
     } catch (error) {
       await context.editDelete(
           error is RangeError ? "Прикрепите изображение к сообщению!" : error.toString());
