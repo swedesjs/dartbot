@@ -255,8 +255,7 @@ Future<void> main() async {
   /// Дата регистрации VK
   hearManager.hear(BasePattern(r"^(?:дата)\s?(.*)?$"), (context) async {
     try {
-      final userId = context.replyMessage?.senderId ??
-          (await resolveResource(context.match[0].group(1), vk.api))["id"] as int;
+      final userId = await getUserId(context, vk.api);
 
       final dataReg = await getVkRegDate(userId);
       final user = (await vk.api.users.get(user_ids: [userId], name_case: "gen"))["response"][0];
@@ -439,8 +438,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
       String? url;
       try {
         url = context.photo[0].largeSizeUrl;
-      } catch (error) {
-      }
+      } catch (error) {}
 
       try {
         url ??= context.replyMessage!.photo[0].largeSizeUrl;
