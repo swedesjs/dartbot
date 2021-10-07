@@ -20,7 +20,7 @@ String unixStampTime(num stamp) {
 
   return "${year > 0 ? "${year.floor()} ${declOfNum(year, [
           "г",
-          "л",
+          "г",
           "л"
         ])}. " : ""}${mes > 0 ? "${mes.floor()} мес. " : ""}${day > 0 ? "${day.floor()} д. " : ""}${house > 0 ? "${house.floor()} ч. " : ""}${minutes > 0 ? "${minutes.floor()} м. " : ""}${second > 0 ? "${second.floor()} с. " : ""}";
 }
