@@ -4,6 +4,7 @@ import "package:vklib/src/core/utils/keyboard.dart";
 import "package:vklib/vklib.dart";
 
 import "../objects/editOptions.dart";
+import "../objects/forwards.dart";
 import "../objects/photoAttachment.dart";
 import "../objects/reply.dart";
 import "../utils/utils.dart";
@@ -36,6 +37,8 @@ class MessageContext {
       .where((element) => element["type"] == "photo")
       .map((e) => PhotoAttachment(e["photo"]))
       .toList();
+
+  List<Forwards> get forwards => (options["fwd_messages"] as List).map((e) => Forwards(e)).toList();
 
   bool get isChat => peerType == MessageSource.CHAT;
   bool get isUser => senderType == MessageSource.USER;
