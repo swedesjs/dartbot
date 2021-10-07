@@ -74,6 +74,7 @@ class GetUserSticker {
 }
 
 class Stickers {
+  // ignore: unused_field
   final String _token;
 
   final API _api;

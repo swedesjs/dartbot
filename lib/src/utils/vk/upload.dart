@@ -4,7 +4,7 @@ import "package:dio/dio.dart";
 import "package:vklib/vklib.dart";
 
 class Upload {
-  API _api;
+  final API _api;
   Upload(this._api);
 
   Future<String> privateMessageAsBytes(List<int> byte, {int? peerId}) => privateMessageConduct(byte, peerId: peerId);

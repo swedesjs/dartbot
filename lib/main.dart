@@ -315,7 +315,6 @@ ${(userStickers.items.length < 120 ? userStickers.items : userStickers.items.sub
   });
 
   hearManager.hear(BasePattern(r"^(?:ip)\s(.*)$"), (context) async {
-    print(Uri.parse(context.match[0].group(1)!).origin);
     try {
       final response = await IpService(Uri.parse(context.match[0].group(1)!)).load();
 
