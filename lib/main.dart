@@ -257,6 +257,11 @@ Future<void> main() async {
     try {
       final userId = await getUserId(context, vk.api);
 
+      if (userId == null) {
+        await context.editDelete("Не найден ID по которому нужно найти дату!");
+        return;
+      }
+
       final futureWait = await Future.wait([
         getVkRegDate(userId),
         vk.api.users.get(user_ids: [userId], name_case: "gen")
@@ -475,6 +480,12 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
   hearManager.hear(BasePattern(r"^(?:!tester)\s?(.*)?$"), (context) async {
     try {
       final userId = await getUserId(context, vk.api);
+
+      if (userId == null) {
+        await context.editDelete("Не найден ID пользователя");
+        return;
+      }
+
       final tester = await getTester(userId);
 
       await context.editDelete("""
