@@ -3,30 +3,10 @@
 import "package:vklib/src/core/utils/keyboard.dart";
 import "package:vklib/vklib.dart";
 
+import "../objects/editOptions.dart";
 import "../objects/photoAttachment.dart";
+import "../objects/reply.dart";
 import "../utils/utils.dart";
-
-class EditOptions {
-  num? lat, long;
-  bool? keep_snippets, dont_parse_links;
-  String? attachment;
-  EditOptions({this.lat, this.long, this.keep_snippets, this.dont_parse_links, this.attachment});
-}
-
-class Reply {
-  Json options;
-  Reply(this.options);
-
-  int get id => options["id"];
-  int get senderId => options["from_id"];
-  int get createdAt => options["date"];
-  String? get text => options["text"];
-  
-  List<PhotoAttachment> get photo => (options["attachments"] as List)
-      .where((element) => element["type"] == "photo")
-      .map((e) => PhotoAttachment(e["photo"]))
-      .toList();
-}
 
 class MessageContext {
   final int _idParam;

@@ -13,6 +13,7 @@ import "package:vklib/src/core/utils/resolveResource.dart";
 import "package:vklib/vklib.dart";
 
 import "src/context/message_context.dart";
+import "src/objects/editOptions.dart";
 import "src/utils/ip.dart";
 import "src/utils/utils.dart";
 
@@ -67,7 +68,6 @@ Future<void> main() async {
     }
 
     if (!isLoad) await context.loadMessagePayload();
-
     await hearManager.middleware(context);
   });
 
