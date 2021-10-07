@@ -280,8 +280,11 @@ Future<void> main() async {
     try {
       final ms = dateNow();
 
-      final userId = context.replyMessage?.senderId ??
-          (await resolveResource(context.match[0].group(1), vk.api))["id"] as int;
+      final userId = await getUserId(context, vk.api);
+      if (userId == null) {
+        await context.editDelete("Не найден ID юзера");
+        return;
+      }
 
       final futureWait = await Future.wait([
         vk.api.users.get(user_ids: [userId], name_case: "gen"),
