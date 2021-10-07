@@ -18,4 +18,6 @@ class Forwards {
       .where((element) => element["type"] == "photo")
       .map((e) => PhotoAttachment(e["photo"]))
       .toList();
+      
+  bool get hasPhoto => photo.isNotEmpty;
 }

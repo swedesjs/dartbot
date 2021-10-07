@@ -33,12 +33,17 @@ class MessageContext {
 
   Reply? get replyMessage =>
       options["reply_message"] != null ? Reply(options["reply_message"]) : null;
+
+  List<Forwards> get forwards => (options["fwd_messages"] as List).map((e) => Forwards(e)).toList();
+
   List<PhotoAttachment> get photo => (options["attachments"] as List)
       .where((element) => element["type"] == "photo")
       .map((e) => PhotoAttachment(e["photo"]))
       .toList();
 
-  List<Forwards> get forwards => (options["fwd_messages"] as List).map((e) => Forwards(e)).toList();
+  bool get hasReply => replyMessage != null;
+  bool get hasForwards => forwards.isNotEmpty;
+  bool get hasPhoto => photo.isNotEmpty;
 
   bool get isChat => peerType == MessageSource.CHAT;
   bool get isUser => senderType == MessageSource.USER;
