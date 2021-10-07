@@ -65,7 +65,7 @@ class PhotoAttachment {
     if (sizes.isEmpty) return [];
 
     return sizeTypes
-        .map<_PhotoAttachmentSizes?>((sizeType) {
+        .map((sizeType) {
           try {
             return sizes.lastWhere((element) => element.type == sizeType);
           } catch (error) {
