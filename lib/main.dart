@@ -8,6 +8,7 @@ import "package:dart_ping/dart_ping.dart";
 import "package:dio/dio.dart";
 import "package:dotenv/dotenv.dart" show env, load;
 import "package:image/image.dart";
+import "package:puppeteer/puppeteer.dart";
 import "package:system_info/system_info.dart";
 import "package:vklib/src/core/utils/resolveResource.dart";
 import "package:vklib/vklib.dart";
@@ -503,6 +504,24 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
 
 https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
 """);
+    } catch (error) {
+      await context.editDelete(error.toString());
+    }
+  });
+
+  hearManager.hear(BasePattern(r"^(?:screen)\s(.*)$"), (context) async {
+    try {
+      final browser = await puppeteer.launch();
+      final page = await browser.newPage();
+
+      await page.emulate(puppeteer.devices.pixel2XL);
+      await page.goto(context.match[0].group(1)!, wait: Until.networkIdle);
+
+      final screenshot = await page.screenshot();
+      final messagePhoto = await upload.privateMessageAsBytes(screenshot);
+
+      await context.editDelete("", edit: EditOptions(attachment: messagePhoto));
+      await browser.close();
     } catch (error) {
       await context.editDelete(error.toString());
     }

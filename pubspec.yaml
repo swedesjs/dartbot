@@ -8,6 +8,7 @@ dependencies:
   dotenv: ^3.0.0
   image: ^3.0.8
   path: ^1.8.0
+  puppeteer: ^2.3.0
   system_info: ^1.0.1
   vklib: ^0.2.3
 dev_dependencies: 
