@@ -3,17 +3,17 @@ import "dart:convert";
 import "package:dio/dio.dart";
 import "package:vklib/vklib.dart";
 
+import "../photoByte.dart";
+
 class Upload {
   final API _api;
   Upload(this._api);
 
-  Future<String> privateMessageAsBytes(List<int> byte, {int? peerId}) => privateMessageConduct(byte, peerId: peerId);
+  Future<String> privateMessageAsBytes(List<int> byte, {int? peerId}) =>
+      privateMessageConduct(byte, peerId: peerId);
 
-  Future<String> privateMessageAsUrl(String url, {int? peerId}) async {
-    final response = await Dio().get(url, options: Options(responseType: ResponseType.bytes));
-
-    return await privateMessageConduct(response.data, peerId: peerId);
-  }
+  Future<String> privateMessageAsUrl(String url, {int? peerId}) async =>
+      await privateMessageConduct(await photoByteUrl(url), peerId: peerId);
 
   Future<String> privateMessageConduct(List<int> source, {int? peerId}) async {
     final getServer = (await _api.photos.getMessagesUploadServer(peer_id: peerId))["response"],
