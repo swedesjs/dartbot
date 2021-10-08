@@ -532,13 +532,15 @@ https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
       final image1 = decodeImage(futureWait[0])!;
       final image2 = decodeImage(futureWait[1])!;
 
-      final image = Image(image1.width + image2.width, image1.height);
+      final image = Image(image1.width + image2.width,
+          image1.height >= image2.height ? image1.height : image2.height);
 
       drawImage(image, image1);
       drawImage(image, image2, dstX: image1.width);
 
       final photoDeploy = await upload.privateMessageAsBytes(encodePng(image));
-      await context.editDelete("", edit: EditOptions(attachment: photoDeploy), duration: const Duration(minutes: 5));
+      await context.editDelete("",
+          edit: EditOptions(attachment: photoDeploy), duration: const Duration(minutes: 5));
     } catch (error) {
       await context.editDelete(error.toString());
     }
