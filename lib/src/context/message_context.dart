@@ -41,6 +41,15 @@ class MessageContext {
       .map((e) => PhotoAttachment(e["photo"]))
       .toList();
 
+  List<PhotoAttachment> get allPhoto => [
+        if (hasPhoto) ...photo,
+        if (hasReply)
+          if (replyMessage!.hasPhoto) ...replyMessage!.photo,
+        if (hasForwards)
+          for (final element in forwards)
+            if (element.hasPhoto) ...element.photo,
+      ];
+
   bool get hasReply => replyMessage != null;
   bool get hasForwards => forwards.isNotEmpty;
   bool get hasPhoto => photo.isNotEmpty;
