@@ -8,7 +8,7 @@ import "package:dart_ping/dart_ping.dart";
 import "package:dio/dio.dart";
 import "package:dotenv/dotenv.dart" show env, load;
 import "package:image/image.dart";
-import "package:puppeteer/puppeteer.dart";
+import "package:puppeteer/puppeteer.dart" show puppeteer, Until;
 import "package:system_info/system_info.dart";
 import "package:vklib/src/core/utils/resolveResource.dart";
 import "package:vklib/vklib.dart";
@@ -509,6 +509,7 @@ https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
     }
   });
 
+  /// Временно работает только на Windows!
   hearManager.hear(BasePattern(r"^(?:screen)\s(.*)$"), (context) async {
     try {
       final browser = await puppeteer.launch();

@@ -2,3 +2,4 @@ pubspec.lock
 .packages
 .dart_tool
 .env
+.local-chromium
