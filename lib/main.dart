@@ -518,26 +518,30 @@ https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
   });
 
   hearManager.hear(BasePattern(r"^(?:склеять)$"), (context) async {
-    if (context.allPhoto.length < 2) {
-      await context.editDelete("Должно быть 2 фотки!");
-      return;
+    try {
+      if (context.allPhoto.length < 2) {
+        await context.editDelete("Должно быть 2 фотки!");
+        return;
+      }
+
+      final futureWait = await Future.wait([
+        photoByteUrl(context.allPhoto[0].largeSizeUrl!),
+        photoByteUrl(context.allPhoto[1].largeSizeUrl!)
+      ]);
+
+      final image1 = decodeImage(futureWait[0])!;
+      final image2 = decodeImage(futureWait[1])!;
+
+      final image = Image(image1.width + image2.width, image1.height);
+
+      drawImage(image, image1);
+      drawImage(image, image2, dstX: image1.width);
+
+      final photoDeploy = await upload.privateMessageAsBytes(encodePng(image));
+      await context.editDelete("", edit: EditOptions(attachment: photoDeploy));
+    } catch (error) {
+      await context.editDelete(error.toString());
     }
-
-    final futureWait = await Future.wait([
-      photoByteUrl(context.allPhoto[0].largeSizeUrl!),
-      photoByteUrl(context.allPhoto[1].largeSizeUrl!)
-    ]);
-
-    final image1 = decodeImage(futureWait[0])!;
-    final image2 = decodeImage(futureWait[1])!;
-
-    final image = Image(image1.width + image2.width, image1.height);
-
-    drawImage(image, image1);
-    drawImage(image, image2, dstX: image1.width);
-
-    final photoDeploy = await upload.privateMessageAsBytes(encodePng(image));
-    await context.editDelete("", edit: EditOptions(attachment: photoDeploy));
   });
   longpoll.start();
 }
