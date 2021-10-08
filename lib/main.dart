@@ -538,7 +538,7 @@ https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
       drawImage(image, image2, dstX: image1.width);
 
       final photoDeploy = await upload.privateMessageAsBytes(encodePng(image));
-      await context.editDelete("", edit: EditOptions(attachment: photoDeploy));
+      await context.editDelete("", edit: EditOptions(attachment: photoDeploy), duration: const Duration(minutes: 5));
     } catch (error) {
       await context.editDelete(error.toString());
     }
