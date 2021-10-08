@@ -449,27 +449,15 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
 
   hearManager.hear(BasePattern(r"^(?:дем|демотиватор|dem)\s(.*)$"), (context) async {
     try {
-      if (!context.hasPhoto &&
-          !(context.hasReply && context.replyMessage!.hasPhoto) &&
-          !(context.hasForwards && context.forwards[0].hasPhoto)) {
+      if (context.allPhoto.isEmpty) {
         await context.editDelete("Прикрепите или ответьте на сообщение с изображением!");
         return;
       }
 
-      String? url;
-
-      if (context.hasPhoto) url = context.photo[0].largeSizeUrl;
-
-      if (context.hasReply && context.replyMessage!.hasPhoto)
-        url ??= context.replyMessage?.photo[0].largeSizeUrl;
-
-      if (context.hasForwards && context.forwards[0].hasPhoto)
-        url ??= context.forwards[0].photo[0].largeSizeUrl;
-
-      final photoByte = await Dio().get(url!, options: Options(responseType: ResponseType.bytes));
+      final photoByte = await photoByteUrl(context.allPhoto[0].largeSizeUrl);
 
       final image = decodeImage(demotivator)!;
-      final image2 = copyResize(decodeImage(photoByte.data)!,
+      final image2 = copyResize(decodeImage(photoByte)!,
           width: 560, height: 410, interpolation: Interpolation.cubic);
 
       drawImage(image, image2, dstX: 70, dstY: 46);
