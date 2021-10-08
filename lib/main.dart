@@ -454,7 +454,7 @@ ${getInfo["verifed"] == 1 ? "✔ Сообщество верифицирован
         return;
       }
 
-      final photoByte = await photoByteUrl(context.allPhoto[0].largeSizeUrl);
+      final photoByte = await photoByteUrl(context.allPhoto[0].largeSizeUrl!);
 
       final image = decodeImage(demotivator)!;
       final image2 = copyResize(decodeImage(photoByte)!,
