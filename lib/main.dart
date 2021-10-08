@@ -148,7 +148,7 @@ Future<void> main() async {
 
       await context.editDelete("""
 Название: ${preview["title"]}
-Создатель: ${adminId < 0 ? "@club${groupAdmin["id"]} (${groupAdmin["name"]})" : "@id${userAdmin["id"]} (${userAdmin["first_name"]} ${userAdmin["last_name"]}) - ${userAdmin["online"] == 0 ? "не онлайн (${unixTime(lastSeen["time"] * 1000)})" : "онлайн (${onlineEnum[lastSeen["platform"]]})"}"}
+Создатель: ${adminId < 0 ? "@club${groupAdmin["id"]} (${groupAdmin["name"]})" : "@id${userAdmin["id"]} (${userAdmin["first_name"]} ${userAdmin["last_name"]}) - ${userAdmin["online"] == 0 ? "не онлайн ${lastSeen?["time"] != null ? "(${unixTime(lastSeen["time"] * 1000)})" : ""}" : "онлайн (${onlineEnum[lastSeen["platform"]]})"}"}
 Онлайн: ${profiles?.where((element) => element["online"] != 0).length ?? "нет пользователей"}
 Участников: ${preview["members_count"]}
 Боты в беседе: ${groups?.map((e) => "@club${e["id"]} (${e["name"]})").join(", ") ?? "отсуствуют"}
