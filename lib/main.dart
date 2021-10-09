@@ -114,10 +114,12 @@ Future<void> main() async {
   /// Разведка
   hearManager.hear(BasePattern(r"^(?:разведка) ?(.*)?$"), (context) async {
     try {
-      final text = context.replyMessage?.text ?? context.match[0].group(1);
+      final text = context.replyMessage?.text ??
+          context.match[0].group(1) ??
+          (context.hasForwards ? context.forwards[0].text : null);
 
       if (text == null) {
-        await context.send("не найдено ссылки!");
+        await context.send("Не найдено текста сообщения!");
         return;
       }
 
