@@ -183,7 +183,7 @@ Future<void> main() async {
       chunkArray(sliceOrNo, 200).forEach((element) async => await vk.api.messages
           .delete(peer_id: context.peerId, message_ids: element, delete_for_all: true));
 
-      await context.editDelete("Удалено ${sliceOrNo.length} ${declOfNum(sliceOrNo.length, [
+      await context.editDelete("Удалено ${sliceOrNo.length} ${declOfNum(sliceOrNo.length, const [
             "сообщение",
             "сообщения",
             "сообщений"
@@ -299,7 +299,7 @@ Future<void> main() async {
       final packs = userStickers.stats.packs;
 
       await context.editDelete(
-          """У @id$userId (${getUser["first_name"]} ${getUser["last_name"]}) ${packs.paid}/${userStickers.stats.total} платных наборов стикеров (${separator(userStickers.totalPrice)} ${declOfNum(userStickers.totalPrice, [
+          """У @id$userId (${getUser["first_name"]} ${getUser["last_name"]}) ${packs.paid}/${userStickers.stats.total} платных наборов стикеров (${separator(userStickers.totalPrice)} ${declOfNum(userStickers.totalPrice, const [
             "голос",
             "голоса",
             "голосов"
