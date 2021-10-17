@@ -185,7 +185,8 @@ class MessageContext {
               delete_for_all: delete_for_all,
               conversation_message_ids: conversation_message_ids))["response"] as Map)
           .values
-          .every((element) => element as int == 1);
+          .cast<int>()
+          .every((element) => element == 1);
 
   Future<void> loadMessagePayload() async => options =
       (await _api.messages.getById(message_ids: [_idParam]))["response"]["items"][0] as Json;
