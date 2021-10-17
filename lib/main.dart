@@ -5,7 +5,6 @@ import "dart:io";
 
 import "package:crypto/crypto.dart";
 import "package:dart_ping/dart_ping.dart";
-import "package:dio/dio.dart";
 import "package:dotenv/dotenv.dart" show env, load;
 import "package:image/image.dart";
 import "package:puppeteer/puppeteer.dart" show puppeteer, Until;
@@ -15,6 +14,7 @@ import "package:vklib/vklib.dart";
 
 import "src/context/message_context.dart";
 import "src/objects/editOptions.dart";
+import "src/utils/extension.dart" show ListExtension;
 import "src/utils/ip.dart";
 import "src/utils/photoByte.dart";
 import "src/utils/utils.dart";
@@ -543,6 +543,26 @@ https://vk.com/bugs?act=reporter&id=${tester.reporter.id}
       final photoDeploy = await upload.privateMessageAsBytes(encodePng(image));
       await context.editDelete("",
           edit: EditOptions(attachment: photoDeploy), duration: const Duration(minutes: 5));
+    } catch (error) {
+      await context.editDelete(error.toString());
+    }
+  });
+
+  hearManager.hear(BasePattern(r"^(?:!infophoto)$"), (context) async {
+    if (context.allPhoto.isEmpty) {
+      await context.editDelete("Для этой команды нужно хотябы одно изображение!");
+      return;
+    }
+
+    try {
+      final futureWait =
+          await Future.wait(context.allPhoto.map((e) => photoByteUrl(e.largeSizeUrl!)).toList());
+
+      await context.editDelete(
+          "Информация о размерах фотографий:\n\n${futureWait.mapIndexed((index, element) {
+        final image = decodeImage(element)!;
+        return "Фото ${index + 1} - ${bytesToSize(element.length)} (${image.width}x${image.height})";
+      }).join("\n")}");
     } catch (error) {
       await context.editDelete(error.toString());
     }
